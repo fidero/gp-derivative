@@ -2,4 +2,4 @@
 Code accompanying the article: 
 
 
-![alt text](fig/thumbnail.png)
+![alt text](figures/thumbnail.png)

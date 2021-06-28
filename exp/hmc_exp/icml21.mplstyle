@@ -1,0 +1,48 @@
+font.family: serif
+#font.serif: "Computer Modern Roman"
+font.serif: "Times"
+#font.serif: "cmr"
+#font.serif: "cmr"
+font.size: 10.0    # Standard size, scriptsize=7 
+
+text.usetex: True
+
+savefig.format: pdf
+
+lines.linewidth: 2  # 1.5 line width in points
+
+xtick.direction: in  # direction: {in, out, inout}
+ytick.direction: in  # direction: {in, out, inout}
+
+axes.labelsize     : 10.0  ## fontsize of the x any y labels
+axes.titlesize     : 10.0   ## large fontsize of the axes title
+
+xtick.labelsize: 8  # fontsize of the tick labels
+ytick.labelsize: 8  # fontsize of the tick labels
+
+#axes.prop_cycle: cycler('color', ['008fd5', 'fc4f30', 'e5ae38', '6d904f', '8b8b8b', '810f7c'])
+
+
+# axes.formatter.use_mathtext : False
+axes.prop_cycle: cycler('color', ['001C7F', '017517', '8C0900','B8860B', '7600A1',  '006374'])
+
+
+legend.fontsize: 8 #medium
+legend.markerscale: 1.0  # the relative size of legend markers vs. original
+
+figure.figsize: 3.25, 2.08  # figure size in inches
+#figure.figsize: 6.75, 4.17  # figure size in inches
+figure.dpi: 72  # figure dots per inch
+
+#figure.subplot.left   : 0.1  ## the left side of the subplots of the figure
+#figure.subplot.right  : 0.99    ## the right side of the subplots of the figure
+#figure.subplot.bottom : 0.15   ## the bottom of the subplots of the figure
+#figure.subplot.top    : 0.93   ## the top of the subplots of the figure
+
+#figure.subplot.wspace : 0.2    ## the amount of width reserved for space between subplots,
+                                ## expressed as a fraction of the average axis width
+#figure.subplot.hspace : 0.2    ## the amount of height reserved for space between subplots,
+                                ## expressed as a fraction of the average axis height
+
+
+
