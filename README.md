@@ -1,5 +1,5 @@
-# GP-derivative [Accepted @ [ICML 2021](https://icml.cc/)]
-Code accompanying the article: [High-Dimensional Gaussian Process Inference with Derivatives](https://arxiv.org/abs/2102.07542)
+# GP-derivative 
+Code accompanying the article: [High-Dimensional Gaussian Process Inference with Derivatives](https://arxiv.org/abs/2102.07542) [to appear @ [ICML 2021](https://icml.cc/)]
 
 ## Summary
 The kernel Gram matrix for gradient observations exhibits important structure. The figure below shows how the Gram matrix can be decomposed for usage with the matrix inversion lemma for high-dimensional inputs (D>N).
