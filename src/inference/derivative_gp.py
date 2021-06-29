@@ -2,9 +2,6 @@ import numpy as np
 from scipy.linalg import cho_factor, cho_solve
 import scipy.linalg as sla
 
-# from ... import StationaryKernel, InnerProductKernel, build_C
-# from .. import kernels #StationaryKernel, InnerProductKernel, build_C
-# from .. import kernelsStationaryKernel, InnerProductKernel, build_C
 from kernels import StationaryKernel, InnerProductKernel, build_C, FastLinearKernel
 
 
@@ -35,14 +32,11 @@ class DerivativeGaussianProcess:
         Condition GP on given data
         Precomputes required quantities for inference.
         :param dX: locations at which there are derivative observations
-        :param dY: derivative data #TODO: which format? matrix or stacked?
+        :param dY: derivative data 
         -----------
         Solves GZ=dY
         """
 
-        ############
-        # Todo: include prior mean of gradient?
-        ############
 
         D, N = dX.shape
         sig2 = self.hyperparameters["noise_variance"] + self.nugget
@@ -52,41 +46,37 @@ class DerivativeGaussianProcess:
         self.data["dY"] = dY
 
         if issubclass(type(self.k), FastLinearKernel):
-
+            # If `FastLinearKernel` use the closed-form expression for the inverse.
             # Kpinv = np.linalg.inv(self.k._dK_dr(dX,dX) + sig2 * np.eye(N, N))
             L = cho_factor(self.k._dK_dr(dX,dX) + sig2 * np.eye(N, N),lower=True)
 
             c = self.k.hyperparameters["c"]
             dX_=dX-c
-            # a = Kpinv@(dX_.T.dot(dY))
             if self.k.hyperparameters["p"]==1:
                 self.Z = cho_solve(L, (dY/w).T).T
             else:
                 a = cho_solve(L, (cho_solve(L, dX_.T.dot(dY)).T))
-                # self.Z = 1 / w * dY.dot(Kpinv) - dX_.dot(a.dot(Kpinv))
                 self.Z = cho_solve(L, (dY/w).T).T - dX_.dot(a)
 
         else:
-            if N > D:
-                # if N >= D:
+            if N > D: 
+                #Use standard Cholesky decomposition  
                 G = self.k._dKd_explicit(dX, dX)
                 self.cho = cho_factor(G + sig2 * np.eye(N * D))
                 self.Z = cho_solve(self.cho, dY.reshape(-1, 1, order="f")).reshape(
                     *dY.shape, order="f"
                 )
             else:
-
+                # Use the Woodbury decomposition
                 Kp = self.k._dK_dr(dX, dX)
                 Kpp = self.k._d2K_dr2(dX, dX)
-                # XTWX = dX.T.dot(w*dX)
                 XTWX = self.k.XTWX
                 self.data["XTWX"] = XTWX
-                # print(XTWX)
+                
                 if issubclass(type(self.k), StationaryKernel):
-                    # Kpinv = np.linalg.inv(-2*self.k._dK_dr(dX,dX) + sig2 * np.eye(N, N))
+                    
                     Kpinv = np.linalg.inv(-2 * Kp + sig2 * np.eye(N, N))
 
-                    # Kpp = 4*self.k._d2K_dr2(dX,dX)
                     Kpp *= 4
 
                     # -2Kp x w + ULC[4Kpp]L.T U.T
@@ -106,16 +96,12 @@ class DerivativeGaussianProcess:
                     )
                     self.Z = 1 / w * dY.dot(Kpinv) - dX.dot(a)
                 elif issubclass(type(self.k), InnerProductKernel):
-                    #####
-                    # Figure out how to handle c
-                    #######
                     c = self.k.hyperparameters["c"]
                     dX_ = dX - c
                     Kpinv = np.linalg.inv(Kp + sig2 * np.eye(N, N))
 
                     Kpp = self.k._d2K_dr2(dX, dX)
                     T = build_C(1 / Kpp) + np.kron(Kpinv, XTWX)
-                    # print(Kpp,Kpinv,Kp)
                     a = sla.solve(
                         T,
                         (dX_.T.dot(dY)).dot(Kpinv).reshape(-1, 1, order="f"),
