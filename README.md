@@ -6,11 +6,10 @@ The kernel Gram matrix for gradient observations exhibits important structure. T
 ![RBF kernel with N=3 and D=10](fig/thumbnail.png "RBF kernel with N=3 and D=10.")
 
 For high-dimensional input with few observations there can be a drastic speedup. 
-![runtime comparison](fig/runtime.png "CPU comparison of Woodbury decomposition versus standard Cholesky for different D and N.")
+![runtime comparison](fig/runtime.png "CPU comparison of Woodbury decomposition versus standard Cholesky for different D and N. Values below 1 indicate a speedup.")
 
 
-## Citation
-__In progress__
+## Citation [ __In progress__ ]
 
 In the meantime you can cite the arXiv submission:
 ```

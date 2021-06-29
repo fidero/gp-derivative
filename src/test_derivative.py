@@ -1,7 +1,4 @@
 import numpy as np
-import sys
-# sys.path.append(["../"])
-# from kernels import RBF, ExponentialKernel
 from kernels import RBF, ExponentialKernel, LinearKernel, FastLinearKernel
 from inference import DerivativeGaussianProcess
 from matplotlib import pyplot as plt

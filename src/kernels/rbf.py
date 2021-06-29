@@ -18,7 +18,6 @@ class RBF(StationaryKernel):
 
     def K(self, xa, xb):
         W = self.hyperparameters["w"]
-        # self.XTWX = xa.T.dot(W*xb)
         XTWX = xa.T.dot(W * xb)
         self.XTWX = XTWX
         D = (
@@ -39,15 +38,15 @@ class RBF(StationaryKernel):
         """
         Second derivative of the kernel w.r.t. r
         """
-        # return self.K(xa,xb)
         return self.K(xa, xb) / 4.0
+        # return self.K(xa,xb)
 
     def _d3K_dr3(self, xa, xb):
         """
         Third derivative of the kernel w.r.t. r
         """
-        # return self.K(xa,xb)
         return -self.K(xa, xb) / 8.0
+        # return self.K(xa,xb)
 
 
 if __name__ == "__main__":

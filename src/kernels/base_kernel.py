@@ -108,8 +108,6 @@ class InnerProductKernel(Kernel, ABC):
         :param c: np.ndarray reference point
         """
         if isinstance(w, float):
-            # TODO: that's not so cool. But easy to take both floats and vectors.
-            # Also:  Need to figure out how to handle vector c
             assert w > 0, f"w must be positive: {w}"
 
             w = w * np.ones((input_dim, 1))
@@ -187,9 +185,6 @@ class InnerProductKernel(Kernel, ABC):
 
         for a in range(Ma):
             for b in range(Mb):
-                # G[a * D : (a + 1) * D, b * D : (b + 1) * D] =  Kpp[a, b] * np.outer(Wxa[:, a:a+1],Wxb[:, b:b+1].T)
-                # G[a * D : (a + 1) * D, b * D : (b + 1) * D] =  Kpp[a, b] * np.outer(Wxb[:, b:b+1],Wxa[:, a:a+1].T)
-                # G[a * D : (a + 1) * D, b * D : (b + 1) * D] = Kp[a, b] * np.diag(W[:,0]) + Kpp[a, b] * np.outer(Wxa[:, a],Wxb[:, b])
                 G[a * D : (a + 1) * D, b * D : (b + 1) * D] = Kp[a, b] * np.diag(
                     W[:, 0]
                 ) + Kpp[a, b] * np.outer(Wxb[:, b], Wxa[:, a])
@@ -221,12 +216,10 @@ class InnerProductKernel(Kernel, ABC):
         return G
 
     def _Kd_mv(self, xa, xb, Z):
-        # TODO: test
         w = self.hyperparameters["w"]
         c = self.hyperparameters["c"]
         Kp = self._dK_dr(xa, xb)
         wZ = w * Z
-        print(Kp.shape, (xa - c).shape, wZ.shape)
         return (Kp * ((xa - c).T @ wZ)).sum(axis=-1)
 
     def _dKd_mv(self, xa, xb, Z):
@@ -252,12 +245,6 @@ class InnerProductKernel(Kernel, ABC):
 
         return SymmetricWoodbury(w * np.ravel(Kpp.dot(t.T)), U, D1, D2)
 
-        # return (
-        #     (D2 * wX).dot(wZ.T)
-        #     + wZ.dot((D2 * wX).T)
-        #     + (D1 * wX).dot(wX.T)
-        #     + np.diag(w[:, 0] * np.ravel(Kpp.dot(t.T)))
-        # )
 
 
 
@@ -345,7 +332,6 @@ class StationaryKernel(Kernel, ABC):
 
         for a in range(Ma):
             for b in range(Mb):
-                # G[a * N : (a + 1) * N, b * N : (b + 1) * N] =-Kp[a, b] * np.diag(W[:,0]) + Kpp[a, b]* np.outer(Wxb[:, b] - Wxa[:, a], Wxa[:, a] - Wxb[:, b])
                 G[a * N : (a + 1) * N, b * N : (b + 1) * N] = -2 * Kp[a, b] * np.diag(
                     W[:, 0]
                 ) - 4 * Kpp[a, b] * np.outer(
@@ -361,10 +347,7 @@ class StationaryKernel(Kernel, ABC):
         temp = -2 * Kp * (xa.T.dot(wZ) - np.sum(wZ * xb, axis=0, keepdims=True))
 
         return np.sum(temp,axis=1)
-        # return w * (
-        #     -2.0 * Z.dot(Kp.T)
-        #     + np.einsum("iab,ab->ia", xa[..., np.newaxis] - xb[:, np.newaxis, :], temp)
-        # )
+
 
     def _dKd_mv(self, xa, xb, Z):
         w = self.hyperparameters["w"]
@@ -380,24 +363,14 @@ class StationaryKernel(Kernel, ABC):
     def _ddKd_mv(self, xa, xb, Z):
         w = self.hyperparameters["w"]
         Kpp = self._d2K_dr2(xa, xb)
-        # Kppp = self._d3K_dr3(xa, xb)
         Kppp = self._d3K_dr3(xa, xb)
         wX = w * (xa - xb)
         wZ = w * Z
         t = np.sum(wX * Z, axis=0,keepdims=True)
         D1 = -8 * t * Kppp
-        # D1 = 8 * t * Kppp
         D2 = -4 * Kpp
         U = np.hstack((wX,wZ))
-        # print(D1,D2)
         
         return SymmetricWoodbury(w * np.ravel(Kpp.dot(t.T)), U, D1, D2)
-
-        # return (
-        #     (D2 * wX).dot(wZ.T)
-        #     + wZ.dot((D2 * wX).T)
-        #     + (D1 * wX).dot(wX.T)
-        #     + np.diag(w[:, 0] * np.ravel(t.dot(D2.T)))
-        # )
 
 
