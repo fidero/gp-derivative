@@ -10,16 +10,18 @@ For high-dimensional input with few observations there can be a drastic speedup.
 
 
 ## Citation 
-__In progress__
 
-In the meantime you can cite the arXiv submission:
+
 ```
-@misc{deroos2021highdimensional,
-      title={High-Dimensional Gaussian Process Inference with Derivatives}, 
-      author={Filip de Roos and Alexandra Gessner and Philipp Hennig},
-      year={2021},
-      eprint={2102.07542},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
-}
+@InProceedings{de-roos21gp-gradient,
+  title =    {High-Dimensional Gaussian Process Inference with Derivatives},
+  author =       {de Roos, Filip and Gessner, Alexandra and Hennig, Philipp},
+  booktitle =    {Proceedings of the 38th International Conference on Machine Learning},
+  year =     {2021},
+  editor =   {Meila, Marina and Zhang, Tong},
+  volume =   {139},
+  series =   {Proceedings of Machine Learning Research},
+  publisher =    {PMLR},
+  pdf =      {http://proceedings.mlr.press/v139/de-roos21a/de-roos21a.pdf},
+  url =      {http://proceedings.mlr.press/v139/de-roos21a.html},
 ```
